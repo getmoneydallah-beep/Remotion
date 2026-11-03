@@ -3,6 +3,7 @@ import { HelloWorld } from "./HelloWorld";
 import { LopsPromo } from "./LopsPromo";
 import { FinanceReel } from "./finance/FinanceReel";
 import { CapitalFilm } from "./capital/CapitalFilm";
+import { ClimaxProto } from "./capital3d/Climax";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -41,6 +42,7 @@ export const RemotionRoot: React.FC = () => {
       />
       <Composition id="CapitalFilm" component={CapitalFilm} durationInFrames={900} fps={30} width={1080} height={1920} defaultProps={{ from: 0 }} />
       <Composition id="CapitalFilmDraft" component={CapitalFilm} durationInFrames={720} fps={24} width={1080} height={1920} defaultProps={{ from: 0 }} />
+      <Composition id="ClimaxProto" component={ClimaxProto} durationInFrames={120} fps={24} width={1080} height={1920} defaultProps={{ offset: 0 }} />
     </>
   );
 };
