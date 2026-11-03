@@ -1,4 +1,5 @@
 import type { ReelConfig } from "./WorkoutReel";
+import { GRAMS } from "./brand";
 
 // Legs Reel promoting Grams — Train & Eat. Clips: GPT Image 2.5 keyframes → Seedance 2.0 Mini (Higgsfield). VO: Gemini.
 const VO_LEN = [3.33, 4.43, 3.95, 4.26, 3.96, 3.7, 5.1];
@@ -6,10 +7,7 @@ const STARTS = [0.25, 4.3, 9.7, 14.7, 19.9, 24.9, 29.7];
 
 export const LEGS: ReelConfig = {
   duration: 37,
-  brand: {
-    bg: "#0E1012", ink: "#F3F0E9", silver: "#A6ADB8", accent: "#DDA73F", green: "#135241",
-    appName: "Grams", appTagline: "تمرّن وكُل بالأرقام", icon: "legs/icon.jpg", screenshot: "legs/shot_workouts.png",
-  },
+  brand: GRAMS,
   hook: { image: "legs/kf/hook.png", end: 4.0, small: "تبي رجول", big: "أقوى", sub: "٥ تمارين للأرجل" },
   exercises: [
     { clip: "legs/c1.mp4", start: 4.0, end: 9.4, title: "سكوات الدمبل", cue: "صدرك مرفوع، فخذك يوازي الأرض", muscleAr: "الفخذ الأمامية والألوية", muscleEn: "QUADS · GLUTES", dot: [440, 1060] },

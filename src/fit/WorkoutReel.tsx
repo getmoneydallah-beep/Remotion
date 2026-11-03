@@ -11,12 +11,13 @@ const EXPO = Easing.bezier(0.16, 1, 0.3, 1);
 const WHIP_IN = Easing.bezier(0.1, 0.9, 0.2, 1);
 const WHIP_OUT = Easing.bezier(0.8, 0, 0.9, 0.2);
 
-export type Brand = { bg: string; ink: string; silver: string; accent: string; green: string; appName: string; appTagline: string; icon: string; screenshot: string };
+export type Brand = { bg: string; ink: string; silver: string; accent: string; green: string; appName: string; appTagline: string; icon: string; screenshots: string[] };
 export type ExerciseShot = { clip: string; start: number; end: number; title: string; cue: string; muscleAr: string; muscleEn: string; dot: [number, number]; zoom?: number; origin?: string; labelUp?: boolean };
 export type ReelConfig = {
   duration: number;
   brand: Brand;
-  hook: { image: string; end: number; small: string; big: string; sub: string };
+  hook: { image?: string; video?: string; end: number; small: string; big: string; sub: string; shift?: number };
+  grade?: string; // CSS filter applied to every AI clip/still (e.g. recolour a baked glow)
   exercises: ExerciseShot[];
   cta: { start: number; image: string; question: string; line: string; trial: string };
   vo: { src: string; at: number; len: number }[];
@@ -49,10 +50,14 @@ const Hook: React.FC<{ c: ReelConfig; t: number }> = ({ c, t }) => {
   const glow = 1 + 0.12 * Math.sin(t * 4.2);
   return (
     <AbsoluteFill style={whip(t, len, true, false)}>
-      <AbsoluteFill style={{ transform: `translateY(260px) scale(${1.0 + ip(t, [0, len], [0, 0.08])})`, transformOrigin: "50% 60%" }}>
-        <Img src={staticFile(c.hook.image)} style={{ width: W, height: H, objectFit: "cover", filter: `brightness(${glow}) saturate(${glow})` }} />
+      <AbsoluteFill style={{ transform: `translateY(${c.hook.shift ?? 260}px) scale(${1.0 + ip(t, [0, len], [0, 0.08])})`, transformOrigin: "50% 60%" }}>
+        {c.hook.video ? (
+          <OffthreadVideo src={staticFile(c.hook.video)} muted style={{ width: W, height: H, objectFit: "cover", filter: c.grade }} />
+        ) : (
+          <Img src={staticFile(c.hook.image!)} style={{ width: W, height: H, objectFit: "cover", filter: `${c.grade ?? ""} brightness(${glow}) saturate(${glow})` }} />
+        )}
       </AbsoluteFill>
-      <AbsoluteFill style={{ background: `linear-gradient(180deg, ${c.brand.bg} 0px, ${c.brand.bg} 300px, rgba(14,16,18,0) 600px)` }} />
+      <AbsoluteFill style={{ background: `linear-gradient(180deg, ${c.brand.bg} 0px, ${c.brand.bg} ${(c.hook.shift ?? 260) + 40}px, rgba(14,16,18,0) ${(c.hook.shift ?? 260) + 340}px)` }} />
       <Scrim bg={b.bg} />
       <div style={{ position: "absolute", top: 140, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", direction: "rtl" }}>
         <Reveal t={t} at={0.15} style={{ fontFamily: AR, fontSize: 48, color: b.silver }}>{c.hook.small}</Reveal>
@@ -73,7 +78,7 @@ const Exercise: React.FC<{ c: ReelConfig; s: ExerciseShot; idx: number; t: numbe
   return (
     <AbsoluteFill style={whip(lt, len, false, false)}>
       <AbsoluteFill style={{ transform: `scale(${(s.zoom ?? 1) + ip(lt, [0, len], [0, 0.05])})`, transformOrigin: s.origin ?? "50% 50%" }}>
-        <OffthreadVideo src={staticFile(s.clip)} playbackRate={Math.min(1, rate)} muted style={{ width: W, height: H, objectFit: "cover" }} />
+        <OffthreadVideo src={staticFile(s.clip)} playbackRate={Math.min(1, rate)} muted style={{ width: W, height: H, objectFit: "cover", filter: c.grade }} />
       </AbsoluteFill>
       <Scrim bg={b.bg} />
       <div style={{ position: "absolute", top: 140, right: 84, left: 84, display: "flex", flexDirection: "column", alignItems: "flex-start", direction: "rtl" }}>
@@ -112,7 +117,7 @@ const AppCTA: React.FC<{ c: ReelConfig; t: number }> = ({ c, t }) => {
   const pill = ip(lt, [2.4, 3.0], [0, 1], EXPO);
   return (
     <AbsoluteFill style={{ transform: `translateY(${(1 - inP) * 1100}px)`, filter: inP < 0.98 ? `blur(${(1 - inP) * 30}px)` : undefined, backgroundColor: b.bg }}>
-      <Img src={staticFile(c.cta.image)} style={{ position: "absolute", width: W, height: H, objectFit: "cover", opacity: 0.32, filter: "blur(6px)", transform: `scale(${1.1 + lt * 0.01})` }} />
+      <Img src={staticFile(c.cta.image)} style={{ position: "absolute", width: W, height: H, objectFit: "cover", opacity: 0.32, filter: `${c.grade ?? ""} blur(6px)`, transform: `scale(${1.1 + lt * 0.01})` }} />
       <AbsoluteFill style={{ background: `radial-gradient(ellipse 80% 55% at 50% 35%, ${b.green}66 0%, transparent 70%), linear-gradient(180deg, rgba(10,12,14,0.6), rgba(10,12,14,0.9))` }} />
       <div style={{ position: "absolute", top: 120, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", direction: "rtl" }}>
         <Reveal t={lt} at={0.25} style={{ fontFamily: AR, fontSize: 46, color: b.silver }}>{c.cta.question}</Reveal>
@@ -126,8 +131,12 @@ const AppCTA: React.FC<{ c: ReelConfig; t: number }> = ({ c, t }) => {
       </div>
       {/* phone with the real app screen */}
       <div style={{ position: "absolute", left: W / 2 - 230, top: 610 + (1 - phone) * 120, width: 460, height: 960, borderRadius: 64, background: "#0B0C0E", padding: 16, boxShadow: `0 40px 120px rgba(0,0,0,0.7), 0 0 0 2px #2A2D33, 0 0 80px ${b.accent}22`, opacity: phone }}>
-        <div style={{ width: "100%", height: "100%", borderRadius: 50, overflow: "hidden", position: "relative" }}>
-          <Img src={staticFile(b.screenshot)} style={{ width: "100%", height: "118%", objectFit: "cover", objectPosition: "top", transform: `translateY(${-ip(lt, [1.8, 6.5], [0, 15], Easing.inOut(Easing.cubic))}%)` }} />
+        <div style={{ width: "100%", height: "100%", borderRadius: 50, overflow: "hidden", position: "relative", background: "#fff" }}>
+          {b.screenshots.map((src, k) => {
+            const swap = (j: number) => ip(lt, [1.9 + j * 1.7, 2.35 + j * 1.7], [0, 1], Easing.bezier(0.65, 0, 0.35, 1));
+            const x = (k === 0 ? 0 : 1 - swap(k - 1)) - (k < b.screenshots.length - 1 ? swap(k) : 0);
+            return <Img key={k} src={staticFile(src)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: `translateX(${-x * 100}%)` }} />;
+          })}
         </div>
       </div>
       <div style={{ position: "absolute", bottom: 120, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", direction: "rtl", gap: 18 }}>
@@ -150,6 +159,14 @@ export const WorkoutReel: React.FC<{ config: ReelConfig }> = ({ config: c }) => 
   const voActive = (tt: number) => c.vo.some((v) => tt > v.at - 0.15 && tt < v.at + v.len + 0.1);
   return (
     <AbsoluteFill style={{ backgroundColor: c.brand.bg }}>
+      <svg width={0} height={0} style={{ position: "absolute" }}>
+        <defs>
+          {/* "blue → brand gold": only pixels where B > (R+G)/2 move; neutral greys/whites are mathematically unchanged */}
+          <filter id="goldify" colorInterpolationFilters="sRGB">
+            <feColorMatrix type="matrix" values="0.525 -0.475 0.95 0 0  -0.16 0.84 0.32 0 0  0.63 0.63 -0.26 0 0  0 0 0 1 0" />
+          </filter>
+        </defs>
+      </svg>
       <Audio src={staticFile(c.music.src)} volume={(fr) => { const tt = fr / fps; return (voActive(tt) ? c.music.duck : c.music.volume) * ip(tt, [0, 0.6], [0, 1]) * ip(tt, [c.duration - 1.5, c.duration], [1, 0]); }} />
       {c.sfx && <Audio src={staticFile(c.sfx)} volume={0.55} />}
       {c.vo.map((v, i) => (
