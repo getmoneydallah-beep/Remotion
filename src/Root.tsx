@@ -2,6 +2,7 @@ import { Composition } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { LopsPromo } from "./LopsPromo";
 import { FinanceReel } from "./finance/FinanceReel";
+import { CapitalFilm } from "./capital/CapitalFilm";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -38,6 +39,8 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      <Composition id="CapitalFilm" component={CapitalFilm} durationInFrames={900} fps={30} width={1080} height={1920} defaultProps={{ from: 0 }} />
+      <Composition id="CapitalFilmDraft" component={CapitalFilm} durationInFrames={720} fps={24} width={1080} height={1920} defaultProps={{ from: 0 }} />
     </>
   );
 };
