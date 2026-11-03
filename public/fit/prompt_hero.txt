@@ -1,0 +1,4 @@
+Premium 3D CG render, vertical 9:16 frame. A smooth, faceless, matte warm-white mannequin figure (no facial features, no hair, sculpted athletic anatomy, gender-neutral) sits on the bench of a sleek dark graphite lat-pulldown cable machine, gripping a close-grip V-handle at the top of the movement, arms extended overhead, viewed from behind at a three-quarter angle, slightly low camera.
+The latissimus dorsi muscles on the figure's back are rendered as visible anatomical muscle fibres glowing a soft electric cobalt blue (#5278F7), subtle emissive light, everything else plain matte white.
+Environment: minimal dark charcoal studio (#101216) with soft cinematic top-right key light, gentle rim light, soft contact shadows on a matte dark floor, shallow depth of field, no text, no logos, no watermark, clean negative space at the top third for a title.
+Style: high-end product visualization, Octane/Blender quality, crisp, photoreal materials.
