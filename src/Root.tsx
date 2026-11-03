@@ -1,6 +1,7 @@
 import { Composition } from "remotion";
 import { HelloWorld } from "./HelloWorld";
 import { LopsPromo } from "./LopsPromo";
+import { FinanceReel } from "./finance/FinanceReel";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -20,6 +21,22 @@ export const RemotionRoot: React.FC = () => {
         fps={24}
         width={540}
         height={960}
+      />
+      <Composition
+        id="FinanceReel"
+        component={FinanceReel}
+        durationInFrames={900}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="FinanceReelDraft"
+        component={FinanceReel}
+        durationInFrames={720}
+        fps={24}
+        width={1080}
+        height={1920}
       />
     </>
   );
