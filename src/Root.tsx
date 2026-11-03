@@ -6,6 +6,7 @@ import { CapitalFilm } from "./capital/CapitalFilm";
 import { ClimaxProto } from "./capital3d/Climax";
 import { Film3D } from "./capital3d/Film3D";
 import { FitPilot } from "./fit/FitPilot";
+import { BackReel } from "./fit/BackReel";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -48,6 +49,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="Film3D" component={Film3D} durationInFrames={945} fps={30} width={1080} height={1920} />
       <Composition id="Film3DDraft" component={Film3D} durationInFrames={756} fps={24} width={1080} height={1920} />
       <Composition id="FitPilot" component={FitPilot} durationInFrames={276} fps={30} width={1080} height={1920} />
+      <Composition id="BackReel" component={BackReel} durationInFrames={1110} fps={30} width={1080} height={1920} />
     </>
   );
 };

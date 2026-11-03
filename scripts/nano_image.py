@@ -3,7 +3,7 @@ import base64, json, os, sys, urllib.request
 model, prompt_file, out = sys.argv[1], sys.argv[2], sys.argv[3]
 parts = [{"text": open(prompt_file, encoding="utf-8").read()}]
 for ref in sys.argv[4:]:
-    parts.append({"inlineData": {"mimeType": "image/png", "data": base64.b64encode(open(ref, "rb").read()).decode()}})
+    parts.append({"inlineData": {"mimeType": "image/jpeg" if ref.lower().endswith((".jpg", ".jpeg")) else "image/png", "data": base64.b64encode(open(ref, "rb").read()).decode()}})
 body = {"contents": [{"parts": parts}], "generationConfig": {"responseModalities": ["IMAGE"], "imageConfig": {"aspectRatio": "9:16"}}}
 req = urllib.request.Request(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent", data=json.dumps(body).encode(),
                              headers={"Content-Type": "application/json", "x-goog-api-key": os.environ["geminikey"]})
