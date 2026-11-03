@@ -10,6 +10,7 @@ import { BackReel } from "./fit/BackReel";
 import { WorkoutReel } from "./fit/WorkoutReel";
 import { LEGS } from "./fit/legs";
 import { BACK } from "./fit/back";
+import { SMITH } from "./fit/smith";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -55,6 +56,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="BackReel" component={BackReel} durationInFrames={1110} fps={30} width={1080} height={1920} />
       <Composition id="LegsReel" component={WorkoutReel} durationInFrames={1110} fps={30} width={1080} height={1920} defaultProps={{ config: LEGS }} />
       <Composition id="BackReelGrams" component={WorkoutReel} durationInFrames={1200} fps={30} width={1080} height={1920} defaultProps={{ config: BACK }} />
+      <Composition id="SmithReel" component={WorkoutReel} durationInFrames={1065} fps={30} width={1080} height={1920} defaultProps={{ config: SMITH }} />
     </>
   );
 };
