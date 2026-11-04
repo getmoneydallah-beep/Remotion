@@ -12,7 +12,7 @@ const WHIP_IN = Easing.bezier(0.1, 0.9, 0.2, 1);
 const WHIP_OUT = Easing.bezier(0.8, 0, 0.9, 0.2);
 
 export type Brand = { bg: string; ink: string; silver: string; accent: string; green: string; appName: string; appTagline: string; icon: string; screenshots: string[] };
-export type ExerciseShot = { clip: string; start: number; end: number; title: string; cue: string; muscleAr: string; muscleEn: string; dot: [number, number]; zoom?: number; origin?: string; labelUp?: boolean };
+export type ExerciseShot = { clip: string; start: number; end: number; title: string; cue: string; muscleAr: string; muscleEn: string; dot: [number, number]; zoom?: number; origin?: string; labelUp?: boolean; clipLen?: number };
 export type ReelConfig = {
   duration: number;
   brand: Brand;
@@ -97,7 +97,7 @@ const Outro: React.FC<{ c: ReelConfig; t: number }> = ({ c, t }) => {
 const Exercise: React.FC<{ c: ReelConfig; s: ExerciseShot; idx: number; t: number }> = ({ c, s, idx, t }) => {
   const b = c.brand, lt = t - s.start, len = s.end - s.start, n = c.exercises.length;
   const call = ip(lt, [1.3, 1.9], [0, 1], EXPO) * (1 - ip(lt, [len - 0.7, len - 0.4], [0, 1]));
-  const rate = 5.0 / Math.max(len, 0.1);
+  const rate = (s.clipLen ?? 5.0) / Math.max(len, 0.1);
   return (
     <AbsoluteFill style={whip(lt, len, false, false)}>
       <AbsoluteFill style={{ transform: `scale(${(s.zoom ?? 1) + ip(lt, [0, len], [0, 0.05])})`, transformOrigin: s.origin ?? "50% 50%" }}>

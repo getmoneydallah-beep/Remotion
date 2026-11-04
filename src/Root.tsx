@@ -13,6 +13,7 @@ import { BACK } from "./fit/back";
 import { SMITH } from "./fit/smith";
 import { GLUTES } from "./fit/glutes";
 import { CHEST } from "./fit/chest";
+import { BICEPS } from "./fit/biceps";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -61,6 +62,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="SmithReel" component={WorkoutReel} durationInFrames={1065} fps={30} width={1080} height={1920} defaultProps={{ config: SMITH }} />
       <Composition id="GlutesReel" component={WorkoutReel} durationInFrames={1059} fps={30} width={1080} height={1920} defaultProps={{ config: GLUTES }} />
       <Composition id="ChestReel" component={WorkoutReel} durationInFrames={1275} fps={30} width={1080} height={1920} defaultProps={{ config: CHEST }} />
+      <Composition id="BicepsReel" component={WorkoutReel} durationInFrames={1200} fps={30} width={1080} height={1920} defaultProps={{ config: BICEPS }} />
     </>
   );
 };
