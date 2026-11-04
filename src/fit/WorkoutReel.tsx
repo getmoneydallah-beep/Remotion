@@ -16,7 +16,7 @@ export type ExerciseShot = { clip: string; start: number; end: number; title: st
 export type ReelConfig = {
   duration: number;
   brand: Brand;
-  hook: { image?: string; video?: string; end: number; small: string; big: string; sub: string; shift?: number; mark?: string; sub2?: { at: number; text: string } };
+  hook: { image?: string; video?: string; end: number; small: string; big: string; sub: string; shift?: number; mark?: string; sub2?: { at: number; text: string }; clipLen?: number };
   outro?: { image: string; start: number; end: number; small: string; big: string; sub: string };
   grade?: string; // CSS filter applied to every AI clip/still (e.g. recolour a baked glow)
   exercises: ExerciseShot[];
@@ -53,7 +53,7 @@ const Hook: React.FC<{ c: ReelConfig; t: number }> = ({ c, t }) => {
     <AbsoluteFill style={whip(t, len, true, false)}>
       <AbsoluteFill style={{ transform: `translateY(${c.hook.shift ?? 260}px) scale(${1.0 + ip(t, [0, len], [0, 0.08])})`, transformOrigin: "50% 60%" }}>
         {c.hook.video ? (
-          <OffthreadVideo src={staticFile(c.hook.video)} muted style={{ width: W, height: H, objectFit: "cover", filter: c.grade }} />
+          <OffthreadVideo src={staticFile(c.hook.video)} playbackRate={Math.min(1, (c.hook.clipLen ?? 99) / len)} muted style={{ width: W, height: H, objectFit: "cover", filter: c.grade }} />
         ) : (
           <Img src={staticFile(c.hook.image!)} style={{ width: W, height: H, objectFit: "cover", filter: `${c.grade ?? ""} brightness(${glow}) saturate(${glow})` }} />
         )}
