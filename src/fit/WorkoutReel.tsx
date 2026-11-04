@@ -16,7 +16,8 @@ export type ExerciseShot = { clip: string; start: number; end: number; title: st
 export type ReelConfig = {
   duration: number;
   brand: Brand;
-  hook: { image?: string; video?: string; end: number; small: string; big: string; sub: string; shift?: number };
+  hook: { image?: string; video?: string; end: number; small: string; big: string; sub: string; shift?: number; mark?: string; sub2?: { at: number; text: string } };
+  outro?: { image: string; start: number; end: number; small: string; big: string; sub: string };
   grade?: string; // CSS filter applied to every AI clip/still (e.g. recolour a baked glow)
   exercises: ExerciseShot[];
   cta: { start: number; image: string; question: string; line: string; trial: string };
@@ -62,10 +63,32 @@ const Hook: React.FC<{ c: ReelConfig; t: number }> = ({ c, t }) => {
       <div style={{ position: "absolute", top: 140, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", direction: "rtl" }}>
         <Reveal t={t} at={0.15} style={{ fontFamily: AR, fontSize: 48, color: b.silver }}>{c.hook.small}</Reveal>
         <Reveal t={t} at={0.3} style={{ fontFamily: AR, fontSize: 150, fontWeight: 600, color: b.ink, lineHeight: 1.3 }}>
-          {c.hook.big}<span style={{ color: b.accent }}>؟</span>
+          {c.hook.big}<span style={{ color: b.accent }}>{c.hook.mark ?? "؟"}</span>
         </Reveal>
         <div style={{ height: 6, width: 220 * ip(t, [0.8, 1.4], [0, 1], EXPO), background: b.accent, borderRadius: 3, margin: "6px 0 18px" }} />
         <Reveal t={t} at={1.3} style={{ fontFamily: AR, fontSize: 46, fontWeight: 500, color: b.ink }}>{c.hook.sub}</Reveal>
+        {c.hook.sub2 && (
+          <Reveal t={t} at={c.hook.sub2.at} style={{ fontFamily: AR, fontSize: 52, fontWeight: 600, color: b.accent, marginTop: 14 }}>{c.hook.sub2.text}</Reveal>
+        )}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// Closing statement card (e.g. the key takeaway of a tips video)
+const Outro: React.FC<{ c: ReelConfig; t: number }> = ({ c, t }) => {
+  const o = c.outro!, b = c.brand, lt = t - o.start, len = o.end - o.start;
+  return (
+    <AbsoluteFill style={whip(lt, len, false, false)}>
+      <AbsoluteFill style={{ transform: `translateY(360px) scale(${1.0 + ip(lt, [0, len], [0, 0.07])})`, transformOrigin: "50% 60%" }}>
+        <Img src={staticFile(o.image)} style={{ width: W, height: H, objectFit: "cover", filter: `${c.grade ?? ""} brightness(0.8)` }} />
+      </AbsoluteFill>
+      <AbsoluteFill style={{ background: `linear-gradient(180deg, ${b.bg} 0px, ${b.bg} 420px, rgba(14,16,18,0) 760px)` }} />
+      <div style={{ position: "absolute", top: 170, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", direction: "rtl", gap: 6 }}>
+        <Reveal t={lt} at={0.3} style={{ fontFamily: AR, fontSize: 50, color: b.silver }}>{o.small}</Reveal>
+        <Reveal t={lt} at={0.5} style={{ fontFamily: AR, fontSize: 88, fontWeight: 600, color: b.ink, lineHeight: 1.3, textAlign: "center", whiteSpace: "pre-line" }}>{o.big}</Reveal>
+        <div style={{ height: 6, width: 260 * ip(lt, [0.9, 1.5], [0, 1], EXPO), background: b.accent, borderRadius: 3, margin: "10px 0" }} />
+        <Reveal t={lt} at={3.5} style={{ fontFamily: AR, fontSize: 58, fontWeight: 600, color: b.accent }}>{o.sub}</Reveal>
       </div>
     </AbsoluteFill>
   );
@@ -178,6 +201,9 @@ export const WorkoutReel: React.FC<{ config: ReelConfig }> = ({ config: c }) => 
           <Exercise c={c} s={s} idx={i} t={t} />
         </Sequence>
       ))}
+      {c.outro && (
+        <Sequence from={Math.round(c.outro.start * fps)} durationInFrames={Math.round((c.outro.end - c.outro.start + 0.4) * fps)}><Outro c={c} t={t} /></Sequence>
+      )}
       <Sequence from={Math.round(c.cta.start * fps)}><AppCTA c={c} t={t} /></Sequence>
     </AbsoluteFill>
   );
