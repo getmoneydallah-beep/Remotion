@@ -1,0 +1,19 @@
+«ابدأ الآن» voice-over. ElevenLabs eleven_v4, voice "Nora S - Saudi Natural & Calm" (FZeLZd39ejvLgzR2gY0t).
+One clip per scene → public/startnow/vo/NN.mp3. Phrase marks in src/startnow/timeline.json.
+
+01 [softly] تقدر تبقى هنا… [pause] أو تطلع فوق.
+02 [serious] إنت للحين… ما فهمت؟
+03 [softly] تعبت من نفس الحياة؟ نفس الروتين… يتكرر كل أسبوع. ناس كثير عايشينها. [pause] خايف؟ [slowly] إنك تكملها… لبقية عمرك؟
+04 فالأحسن إنك… [confident] تبدأ الآن.
+05 مو بكرة… [pause] مو الأسبوع الجاي… [pause] ولا حتى الشهر الجاي.
+06 [firmly] لازم تبدأ الآن. [pause] [curious] ليش؟
+07 لأنه دايم بيكون فيه… مشاكل… ظروف… وعوائق. [pause] فالأحسن تبدأ الآن… [confident] بأي حال.
+08 تدري وش الشي العادي؟ [pause] الفشل. [warmly] الفشل عادي… لازم تفشل.
+09 افشل قد ما تقدر… [pause] لأنك في النهاية… [warmly] تنجح.
+10 بس تدري وش اللي مو عادي؟ [pause] [serious] إنك ما تحاول.
+11 [softly] الدرج قدامك… والقرار لك. [pause] [confident] ابدأ الآن.
+
+Music (public/startnow/music.mp3): ElevenLabs eleven_music_v2_5 —
+"Instrumental dark ambient cinematic motivational track, about 55 seconds, 84 BPM. Sustained warm synth pad and soft
+felt piano chords in A minor, with a deep soft kick pulse on every beat and light ticking hi-hats; minimal, spacious,
+introspective, no melody lead and no vocals. ..."

@@ -13,7 +13,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { DISPLAY, UI } from "./fonts";
-import TL from "./timeline.json";
+import { SCENES as TIMELINE, TOTAL_FRAMES, MUSIC, sceneT, marksFor } from "./timing";
 
 /*
  * «ابدأ الآن» — minimal monochrome motivational Reel (Arabic, RTL).
@@ -179,6 +179,7 @@ const SceneWrap: React.FC<{ dur: number; children: React.ReactNode; push?: numbe
 /** 1 — «ابقَ هنا… أو اطلع فوق» */
 const StairsHook: React.FC = () => {
   const f = useCurrentFrame();
+  const m = marksFor("stairs");
   const groundY = 1080;
   const baseX = 800; // stairs start here and climb leftwards
   const step = 68;
@@ -192,18 +193,18 @@ const StairsHook: React.FC = () => {
   const topX = baseX - n * step;
   const topY = groundY - n * step;
   const pathLen = n * step * 2 + 10;
-  const stairP = draw(f, 20, 52);
+  const stairP = draw(f, 28, 64);
   const groundP = draw(f, 0, 12);
-  const sun = interpolate(f, [56, 70], [0, 1], { ...clamp, easing: ease });
+  const sun = interpolate(f, [m("up", -4), m("up", 10)], [0, 1], { ...clamp, easing: ease });
   return (
-    <SceneWrap dur={96}>
+    <SceneWrap dur={sceneT("stairs").dur}>
       <Stage>
         <line x1={1010} y1={groundY} x2={1010 - 210 * groundP} y2={groundY} {...lineStyle} />
         <path d={d} {...lineStyle} strokeDasharray={pathLen} strokeDashoffset={pathLen * (1 - stairP)} />
         {/* arrow up from the top step */}
-        <g opacity={draw(f, 44, 54)}>
-          <line x1={topX + 30} y1={topY - 10} x2={topX + 30} y2={topY - 10 - 110 * draw(f, 44, 56)} {...lineStyle} strokeWidth={4} />
-          <path d={`M ${topX + 16} ${topY - 104} L ${topX + 30} ${topY - 122} L ${topX + 44} ${topY - 104}`} {...lineStyle} strokeWidth={4} opacity={draw(f, 52, 56)} />
+        <g opacity={draw(f, 56, 66)}>
+          <line x1={topX + 30} y1={topY - 10} x2={topX + 30} y2={topY - 10 - 110 * draw(f, 56, 70)} {...lineStyle} strokeWidth={4} />
+          <path d={`M ${topX + 16} ${topY - 104} L ${topX + 30} ${topY - 122} L ${topX + 44} ${topY - 104}`} {...lineStyle} strokeWidth={4} opacity={draw(f, 66, 70)} />
         </g>
         {/* sun */}
         <g opacity={sun} transform={`translate(${topX + 30} ${topY - 190}) scale(${0.6 + 0.4 * sun}) rotate(${f * 1.2})`}>
@@ -214,12 +215,12 @@ const StairsHook: React.FC = () => {
         </g>
       </Stage>
       <Person x={905} y={groundY - 3} style={reveal(f, 4, 10, 0)} />
-      <div style={reveal(f, 12)}>
+      <div style={reveal(f, m("stay", 2))}>
         <Txt x={905} y={groundY + 56} size={38} font={UI} weight={600}>
           ابقَ هنا
         </Txt>
       </div>
-      <div style={reveal(f, 58)}>
+      <div style={reveal(f, m("up"))}>
         <Txt x={topX + 170} y={topY - 60} size={44} font={UI} weight={600} style={{ textShadow: SOFT_GLOW }}>
           أو اطلع فوق
         </Txt>
@@ -231,14 +232,15 @@ const StairsHook: React.FC = () => {
 /** 2 — «إنت للحين ما فهمت؟» */
 const Understand: React.FC = () => {
   const f = useCurrentFrame();
+  const m = marksFor("understand");
   return (
-    <SceneWrap dur={60}>
-      <div style={reveal(f, 0, 10)}>
+    <SceneWrap dur={sceneT("understand").dur}>
+      <div style={reveal(f, m("l1"), 10)}>
         <Txt y={860} size={84} weight={800} glow>
           إنت للحين
         </Txt>
       </div>
-      <div style={reveal(f, 18, 10)}>
+      <div style={reveal(f, m("l2", -2), 10)}>
         <Txt y={990} size={118} weight={900} glow>
           ما فهمت؟
         </Txt>
@@ -250,6 +252,7 @@ const Understand: React.FC = () => {
 /** 3 — the week on repeat */
 const WeekLoop: React.FC = () => {
   const f = useCurrentFrame();
+  const m = marksFor("loop");
   const cx = 540;
   const cy = 860;
   const r = 230;
@@ -261,8 +264,8 @@ const WeekLoop: React.FC = () => {
   const trail = ang + 0.16;
   const people = [690, 590, 490, 390];
   return (
-    <SceneWrap dur={180} push={0.05}>
-      <div style={reveal(f, 2)}>
+    <SceneWrap dur={sceneT("loop").dur} push={0.05}>
+      <div style={reveal(f, m("tired"))}>
         <Pill y={500}>تعبت من نفس الحياة؟</Pill>
       </div>
       <Stage>
@@ -272,7 +275,7 @@ const WeekLoop: React.FC = () => {
           <circle cx={cx + Math.cos(trail) * (r + 2)} cy={cy + Math.sin(trail) * (r + 2)} r={8} fill={WHITE} opacity={0.8} />
         </g>
         {/* dashed "rest of your life" line */}
-        <line x1={900} y1={1490} x2={900 - 720 * draw(f, 125, 150)} y2={1490} stroke={WHITE} strokeWidth={4} strokeDasharray="16 14" />
+        <line x1={900} y1={1490} x2={900 - 720 * draw(f, m("finish"), m("finish", 25))} y2={1490} stroke={WHITE} strokeWidth={4} strokeDasharray="16 14" />
       </Stage>
       {days.map((d, i) => {
         const a = -Math.PI / 2 - (i / 7) * Math.PI * 2;
@@ -284,30 +287,30 @@ const WeekLoop: React.FC = () => {
           </div>
         );
       })}
-      <div style={reveal(f, 24)}>
+      <div style={reveal(f, m("routine"))}>
         <Txt x={cx} y={cy - 12} size={60} weight={800} style={{ textShadow: SOFT_GLOW }}>
           نفس الروتين
         </Txt>
       </div>
-      <div style={reveal(f, 32)}>
+      <div style={reveal(f, m("weekly"))}>
         <Txt x={cx} y={cy + 52} size={28} font={UI} weight={500} color={DIM}>
           يتكرر كل أسبوع
         </Txt>
       </div>
       {people.map((x, i) => (
-        <Person key={x} x={x} y={1290} s={0.8} color="rgba(244,244,244,0.55)" style={reveal(f, 50 + i * 4, 10, 10)} />
+        <Person key={x} x={x} y={1290} s={0.8} color="rgba(244,244,244,0.55)" style={reveal(f, m("people", i * 4), 10, 10)} />
       ))}
-      <div style={reveal(f, 66)}>
+      <div style={reveal(f, m("people", 14))}>
         <Txt y={1330} size={32} font={UI} weight={500}>
           ناس كثير عايشينها
         </Txt>
       </div>
-      <div style={reveal(f, 95)}>
+      <div style={reveal(f, m("fear"))}>
         <Txt y={1408} size={58} weight={900} glow>
           خايف؟
         </Txt>
       </div>
-      <div style={reveal(f, 135)}>
+      <div style={reveal(f, m("finish", 6))}>
         <Txt y={1545} size={34} font={UI} weight={600}>
           تكملها لبقية عمرك؟
         </Txt>
@@ -320,17 +323,19 @@ const WeekLoop: React.FC = () => {
 const ButtonPress: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const lit = interpolate(f, [10, 30], [0, 1], { ...clamp, easing: ease });
-  const press = f < 50 ? 1 : 1 - 0.07 * Math.sin(Math.min(1, (f - 50) / 8) * Math.PI);
-  const ring = spring({ frame: f - 50, fps, config: { damping: 200 } });
+  const m = marksFor("button");
+  const P = m("start");
+  const lit = interpolate(f, [P - 8, P + 8], [0, 1], { ...clamp, easing: ease });
+  const press = f < P ? 1 : 1 - 0.07 * Math.sin(Math.min(1, (f - P) / 8) * Math.PI);
+  const ring = spring({ frame: f - P, fps, config: { damping: 200 } });
   return (
-    <SceneWrap dur={84}>
-      <div style={reveal(f, 0)}>
+    <SceneWrap dur={sceneT("button").dur}>
+      <div style={reveal(f, m("better"))}>
         <Txt y={820} size={40} font={UI} weight={600}>
           فالأحسن إنك
         </Txt>
       </div>
-      <div style={{ position: "absolute", inset: 0, ...reveal(f, 8, 14, 0) }}>
+      <div style={{ position: "absolute", inset: 0, ...reveal(f, 18, 14, 0) }}>
       <div style={{ position: "absolute", left: W / 2, top: 1000, transform: `translate(-50%,-50%) scale(${press})` }}>
         <div
           style={{
@@ -339,7 +344,7 @@ const ButtonPress: React.FC = () => {
             borderRadius: 999,
             background: `rgba(244,244,244,${0.18 + 0.82 * lit})`,
             filter: `blur(${(1 - lit) * 10}px)`,
-            boxShadow: `0 0 ${40 * lit}px rgba(255,255,255,0.45), 0 0 0 ${10 + ring * 26}px rgba(244,244,244,${0.9 * (1 - ring) * (f >= 50 ? 1 : 0)}), 0 0 0 10px #050505, 0 0 0 14px rgba(244,244,244,${lit})`,
+            boxShadow: `0 0 ${40 * lit}px rgba(255,255,255,0.45), 0 0 0 ${10 + ring * 26}px rgba(244,244,244,${0.9 * (1 - ring) * (f >= P ? 1 : 0)}), 0 0 0 10px #050505, 0 0 0 14px rgba(244,244,244,${lit})`,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -361,15 +366,16 @@ const ButtonPress: React.FC = () => {
 /** 5 — not tomorrow, not next week, not next month */
 const Cards: React.FC = () => {
   const f = useCurrentFrame();
+  const m = marksFor("cards");
   const items = [
-    { t: "بكرة", at: 10, x: 45, y: 800 },
-    { t: "الأسبوع الجاي", at: 55, x: 95, y: 1060 },
-    { t: "الشهر الجاي", at: 105, x: 145, y: 1320 },
+    { t: "بكرة", at: m("c1"), x: m("c2", -8), y: 800 },
+    { t: "الأسبوع الجاي", at: m("c2"), x: m("c3", -8), y: 1060 },
+    { t: "الشهر الجاي", at: m("c3"), x: m("end", 4), y: 1320 },
   ];
   const cw = 640;
   const ch = 200;
   return (
-    <SceneWrap dur={180} push={0.03}>
+    <SceneWrap dur={sceneT("cards").dur} push={0.03}>
       <div style={reveal(f, 0)}>
         <Pill y={600}>مو…</Pill>
       </div>
@@ -424,10 +430,11 @@ const Cards: React.FC = () => {
 const StartNowBig: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const pop = spring({ frame: f - 15, fps, config: { damping: 14, stiffness: 160 } });
+  const m = marksFor("startNow");
+  const pop = spring({ frame: f - m("big"), fps, config: { damping: 14, stiffness: 160 } });
   return (
-    <SceneWrap dur={90}>
-      <div style={reveal(f, 0)}>
+    <SceneWrap dur={sceneT("startNow").dur}>
+      <div style={reveal(f, m("must"))}>
         <Txt y={810} size={44} font={UI} weight={600}>
           لازم
         </Txt>
@@ -437,7 +444,7 @@ const StartNowBig: React.FC = () => {
           تبدأ الآن
         </Txt>
       </div>
-      <div style={reveal(f, 50)}>
+      <div style={reveal(f, m("why"))}>
         <Pill y={1120}>ليش؟</Pill>
       </div>
     </SceneWrap>
@@ -448,16 +455,17 @@ const StartNowBig: React.FC = () => {
 const Bars: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const m = marksFor("bars");
   const gy = 1200;
   const bars = [
-    { x: 720, h: 190, label: "مشاكل", at: 50 },
-    { x: 510, h: 290, label: "ظروف", at: 85 },
-    { x: 290, h: 410, label: "عوائق", at: 120 },
+    { x: 720, h: 190, label: "مشاكل", at: m("b1") },
+    { x: 510, h: 290, label: "ظروف", at: m("b2") },
+    { x: 290, h: 410, label: "عوائق", at: m("b3") },
   ];
   const bw = 150;
   // figure path: ground → each bar top
   const stops = [{ x: 905, y: gy }, ...bars.map((b) => ({ x: b.x, y: gy - b.h }))];
-  const hops = [190, 215, 240];
+  const hops = [m("swap", 4), m("swap", 22), m("swap", 40)];
   let px = stops[0].x;
   let py = stops[0].y;
   for (let i = 0; i < hops.length; i++) {
@@ -469,14 +477,14 @@ const Bars: React.FC = () => {
       py = a.y + (b.y - a.y) * p - Math.sin(Math.PI * p) * 130;
     }
   }
-  const swap = draw(f, 156, 166);
-  const swap2 = draw(f, 250, 260);
+  const swap = draw(f, m("swap", -4), m("swap", 6));
+  const swap2 = draw(f, m("anyway", -4), m("anyway", 6));
   return (
-    <SceneWrap dur={300} push={0.03}>
-      <div style={{ ...reveal(f, 25), opacity: (reveal(f, 25).opacity as number) * (1 - swap) }}>
+    <SceneWrap dur={sceneT("bars").dur} push={0.03}>
+      <div style={{ ...reveal(f, m("always")), opacity: (reveal(f, m("always")).opacity as number) * (1 - swap) }}>
         <Pill y={560}>دايم بيكون فيه</Pill>
       </div>
-      <div style={reveal(f, 160)}>
+      <div style={reveal(f, m("swap"))}>
         <Pill y={560}>فالأحسن تبدأ الآن</Pill>
       </div>
       <Stage>
@@ -495,12 +503,12 @@ const Bars: React.FC = () => {
         </div>
       ))}
       <Person x={px} y={py - 3} style={reveal(f, 6, 10, 0)} />
-      <div style={{ ...reveal(f, 60), opacity: (reveal(f, 60).opacity as number) * (1 - swap2) }}>
+      <div style={{ ...reveal(f, m("b1", 10)), opacity: (reveal(f, m("b1", 10)).opacity as number) * (1 - swap2) }}>
         <Txt y={gy + 64} size={36} font={UI} weight={600} color={DIM}>
           دايمًا
         </Txt>
       </div>
-      <div style={reveal(f, 254)}>
+      <div style={reveal(f, m("anyway"))}>
         <Txt y={gy + 64} size={40} font={UI} weight={600}>
           بأي حال
         </Txt>
@@ -513,29 +521,31 @@ const Bars: React.FC = () => {
 const Failing: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const pop = spring({ frame: f - 40, fps, config: { damping: 14, stiffness: 150 } });
+  const m = marksFor("failing");
+  const F = m("fail");
+  const pop = spring({ frame: f - F, fps, config: { damping: 14, stiffness: 150 } });
   return (
-    <SceneWrap dur={150}>
-      <div style={{ ...reveal(f, 0), ...(f > 30 ? fadeOut(f, 30, 8) : {}) }}>
+    <SceneWrap dur={sceneT("failing").dur}>
+      <div style={{ ...reveal(f, m("q")), ...(f > F - 12 ? fadeOut(f, F - 12, 8) : {}) }}>
         <Txt y={900} size={72} weight={800} glow>
           تدري وش الشي العادي؟
         </Txt>
       </div>
-      <div style={{ opacity: f >= 40 ? Math.min(1, pop * 1.4) : 0, filter: `blur(${Math.max(0, 1 - pop) * 16}px)` }}>
+      <div style={{ opacity: f >= F ? Math.min(1, pop * 1.4) : 0, filter: `blur(${Math.max(0, 1 - pop) * 16}px)` }}>
         <Txt y={880} size={190} weight={900} glow style={{ transform: `scale(${1.2 - 0.2 * pop})` }}>
           الفشل
         </Txt>
       </div>
-      <div style={{ position: "absolute", inset: 0, ...reveal(f, 60) }}>
+      <div style={{ position: "absolute", inset: 0, ...reveal(f, m("ok")) }}>
       <div style={{ position: "absolute", left: W / 2, top: 1040, transform: "translate(-50%,-50%)", display: "flex", alignItems: "center", gap: 18, direction: "rtl" }}>
         <svg width={52} height={52} viewBox="0 0 52 52">
           <circle cx={26} cy={26} r={22} {...lineStyle} strokeWidth={3.5} />
-          <path d="M15 27 L23 34 L37 19" {...lineStyle} strokeWidth={4} strokeDasharray={40} strokeDashoffset={40 * (1 - draw(f, 64, 76))} />
+          <path d="M15 27 L23 34 L37 19" {...lineStyle} strokeWidth={4} strokeDasharray={40} strokeDashoffset={40 * (1 - draw(f, m("ok", 4), m("ok", 16)))} />
         </svg>
         <span style={{ fontFamily: DISPLAY, fontWeight: 800, fontSize: 54, color: WHITE }}>عادي</span>
       </div>
       </div>
-      <div style={reveal(f, 85)}>
+      <div style={reveal(f, m("must"))}>
         <Pill y={1170}>لازم تفشل</Pill>
       </div>
     </SceneWrap>
@@ -547,6 +557,7 @@ const toArabicDigits = (n: number) => String(n).replace(/\d/g, (d) => "٠١٢٣�
 /** 9 — fail counter on the stairs → success */
 const FailStairs: React.FC = () => {
   const f = useCurrentFrame();
+  const m = marksFor("failStairs");
   const n = 9;
   const step = 72;
   const x0 = 900;
@@ -559,12 +570,12 @@ const FailStairs: React.FC = () => {
   }
   d += ` L ${x0 - n * step} ${y0 - n * step}`;
   const len = n * step * 2 + 40;
-  const stepAt = (i: number) => 8 + i * 10;
+  const stepAt = (i: number) => 8 + i * 9;
   const drawn = draw(f, 4, stepAt(n - 1) + 8);
   const fails = Array.from({ length: n - 1 }).filter((_, i) => f >= stepAt(i) + 6).length;
   const topX = x0 - n * step;
   const topY = y0 - n * step;
-  const star = interpolate(f, [108, 122], [0, 1], { ...clamp, easing: ease });
+  const star = interpolate(f, [m("win", -4), m("win", 10)], [0, 1], { ...clamp, easing: ease });
   const starPath = Array.from({ length: 10 })
     .map((_, i) => {
       const a = -Math.PI / 2 + (i * Math.PI) / 5;
@@ -573,8 +584,8 @@ const FailStairs: React.FC = () => {
     })
     .join(" ") + " Z";
   return (
-    <SceneWrap dur={150} push={0.04}>
-      <div style={reveal(f, 30)}>
+    <SceneWrap dur={sceneT("failStairs").dur} push={0.04}>
+      <div style={reveal(f, m("fail"))}>
         <Pill y={470}>افشل قد ما تقدر</Pill>
       </div>
       <div style={reveal(f, 2)}>
@@ -591,12 +602,12 @@ const FailStairs: React.FC = () => {
           <path d={starPath} fill={WHITE} style={{ filter: "drop-shadow(0 0 20px rgba(255,255,255,0.95))" }} />
         </g>
       </Stage>
-      <div style={reveal(f, 104)}>
+      <div style={reveal(f, m("inEnd"))}>
         <Txt x={topX + 10} y={topY - 160} size={30} font={UI} weight={500} color={DIM}>
           وفي النهاية
         </Txt>
       </div>
-      <div style={reveal(f, 116)}>
+      <div style={reveal(f, m("win"))}>
         <Txt x={topX + 10} y={topY + 10} size={46} weight={900} glow>
           تنجح
         </Txt>
@@ -609,11 +620,13 @@ const FailStairs: React.FC = () => {
 const NotTrying: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const pop = spring({ frame: f - 50, fps, config: { damping: 14, stiffness: 150 } });
-  const dim = interpolate(f, [96, 112], [1, 0.32], clamp);
+  const m = marksFor("notTrying");
+  const B = m("big");
+  const pop = spring({ frame: f - B, fps, config: { damping: 14, stiffness: 150 } });
+  const dim = interpolate(f, [B + 50, B + 66], [1, 0.32], clamp);
   return (
-    <SceneWrap dur={120}>
-      <div style={{ ...reveal(f, 0), ...(f > 40 ? fadeOut(f, 40, 8) : {}) }}>
+    <SceneWrap dur={sceneT("notTrying").dur}>
+      <div style={{ ...reveal(f, m("q")), ...(f > B - 12 ? fadeOut(f, B - 12, 8) : {}) }}>
         <Txt y={860} size={52} font={UI} weight={600}>
           بس تدري وش الشي
         </Txt>
@@ -621,12 +634,12 @@ const NotTrying: React.FC = () => {
           اللي مو عادي؟
         </Txt>
       </div>
-      <div style={{ opacity: f >= 50 ? Math.min(1, pop * 1.4) * dim : 0, filter: `blur(${Math.max(0, 1 - pop) * 16 + (1 - dim) * 4}px)` }}>
+      <div style={{ opacity: f >= B ? Math.min(1, pop * 1.4) * dim : 0, filter: `blur(${Math.max(0, 1 - pop) * 16 + (1 - dim) * 4}px)` }}>
         <Txt y={900} size={150} weight={900} glow style={{ transform: `scale(${1.2 - 0.2 * pop})` }}>
           إنك ما تحاول
         </Txt>
       </div>
-      <div style={reveal(f, 70)}>
+      <div style={reveal(f, B + 20)}>
         <Txt y={1040} size={40} font={UI} weight={600} color={DIM}>
           هذا اللي مو عادي
         </Txt>
@@ -639,7 +652,9 @@ const NotTrying: React.FC = () => {
 const Outro: React.FC<{ broll: string[] }> = ({ broll }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const dur = 156;
+  const dur = sceneT("outro").dur;
+  const m = marksFor("outro");
+  const S = m("start");
   const groundY = 1240;
   const baseX = 820;
   const step = 70;
@@ -662,16 +677,16 @@ const Outro: React.FC<{ broll: string[] }> = ({ broll }) => {
   const done = hop >= n;
   const px = done ? cur(n).x : a.x + (b.x - a.x) * p;
   const py = done ? cur(n).y : a.y + (b.y - a.y) * p - Math.sin(Math.PI * p) * 40;
-  const sun = interpolate(f, [60, 80], [0.25, 1], clamp) * interpolate(f, [84, 96], [1, 0.3], clamp);
-  const pop = spring({ frame: f - 84, fps, config: { damping: 14, stiffness: 150 } });
+  const sun = interpolate(f, [S - 40, S - 16], [0.25, 1], clamp) * interpolate(f, [S, S + 12], [1, 0.3], clamp);
+  const pop = spring({ frame: f - S, fps, config: { damping: 14, stiffness: 150 } });
   const end = interpolate(f, [dur - 18, dur], [1, 0], clamp);
-  const segLen = broll.length ? Math.floor(84 / broll.length) : 0;
+  const segLen = broll.length ? Math.floor(S / broll.length) : 0;
 
   return (
     <SceneWrap dur={dur} noOut push={0.05}>
       <AbsoluteFill style={{ opacity: end }}>
         {broll.length > 0 ? (
-          <AbsoluteFill style={{ opacity: interpolate(f, [80, 90], [1, 0.25], clamp) }}>
+          <AbsoluteFill style={{ opacity: interpolate(f, [S - 4, S + 6], [1, 0.25], clamp) }}>
             {broll.map((src, i) => (
               <Sequence key={src} from={i * segLen} durationInFrames={i === broll.length - 1 ? dur - i * segLen : segLen}>
                 <OffthreadVideo src={staticFile(src)} muted style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(1) contrast(1.15) brightness(0.8)" }} />
@@ -681,20 +696,20 @@ const Outro: React.FC<{ broll: string[] }> = ({ broll }) => {
         ) : (
           <>
             <Stage>
-              <path d={d} {...lineStyle} strokeWidth={4} opacity={interpolate(f, [80, 92], [1, 0.1], clamp)} />
+              <path d={d} {...lineStyle} strokeWidth={4} opacity={interpolate(f, [S - 4, S + 8], [1, 0.1], clamp)} />
               <g transform={`translate(${topX + 10} ${topY - 150})`} opacity={sun}>
                 <circle r={26 + 6 * sun} fill={WHITE} style={{ filter: `drop-shadow(0 0 ${30 * sun}px rgba(255,255,255,0.95))` }} />
               </g>
             </Stage>
-            <Person x={px} y={py - 3} style={{ opacity: interpolate(f, [80, 92], [1, 0.1], clamp) }} />
-            <div style={{ ...reveal(f, 10), opacity: (reveal(f, 10).opacity as number) * interpolate(f, [76, 84], [1, 0], clamp) }}>
+            <Person x={px} y={py - 3} style={{ opacity: interpolate(f, [S - 4, S + 8], [1, 0.1], clamp) }} />
+            <div style={{ ...reveal(f, m("stairs")), opacity: (reveal(f, m("stairs")).opacity as number) * interpolate(f, [S - 8, S], [1, 0], clamp) }}>
               <Txt y={520} size={44} font={UI} weight={600}>
                 الدرج قدامك… والقرار لك
               </Txt>
             </div>
           </>
         )}
-        <div style={{ opacity: f >= 84 ? Math.min(1, pop * 1.4) : 0, filter: `blur(${Math.max(0, 1 - pop) * 16}px)` }}>
+        <div style={{ opacity: f >= S ? Math.min(1, pop * 1.4) : 0, filter: `blur(${Math.max(0, 1 - pop) * 16}px)` }}>
           <Txt y={940} size={180} weight={900} glow style={{ transform: `scale(${1.2 - 0.2 * pop})` }}>
             ابدأ الآن.
           </Txt>
@@ -715,7 +730,7 @@ const Grain: React.FC = () => {
   );
 };
 
-const SCENES: Record<string, React.FC<{ broll: string[] }>> = {
+const SCENE_COMPONENTS: Record<string, React.FC<{ broll: string[] }>> = {
   stairs: StairsHook,
   understand: Understand,
   loop: WeekLoop,
@@ -729,22 +744,60 @@ const SCENES: Record<string, React.FC<{ broll: string[] }>> = {
   outro: Outro,
 };
 
-export const START_NOW_DURATION = TL.scenes[TL.scenes.length - 1].start + TL.scenes[TL.scenes.length - 1].dur;
+export const START_NOW_DURATION = TOTAL_FRAMES;
+
+// VO-active windows (global frames) for ducking the music under the voice.
+const VO_WINDOWS = TIMELINE.map((sc) => {
+  const a = sc.start + sc.voAt;
+  return [a, a + Math.round((sc.marks as unknown as Record<string, number>).end * 30) + 8] as const;
+});
+const duckAt = (f: number) => {
+  let d = 0;
+  for (const [a, b] of VO_WINDOWS) d = Math.max(d, interpolate(f, [a - 6, a, b, b + 10], [0, 1, 1, 0], clamp));
+  return 1 - (1 - MUSIC.duck) * d;
+};
+
+const Music: React.FC = () => {
+  const split = sceneT(MUSIC.splitScene).start;
+  const trackFrames = Math.floor(MUSIC.durationSec * 30);
+  const tail = TOTAL_FRAMES - split;
+  const offsetB = Math.max(0, trackFrames - tail);
+  const endFade = (g: number) => interpolate(g, [TOTAL_FRAMES - 24, TOTAL_FRAMES], [1, 0], clamp);
+  const src = staticFile(MUSIC.file);
+  return (
+    <>
+      <Sequence from={0} durationInFrames={split + MUSIC.fade}>
+        <Audio src={src} volume={(f) => MUSIC.volume * duckAt(f) * interpolate(f, [split, split + MUSIC.fade], [1, 0], clamp)} />
+      </Sequence>
+      <Sequence from={split} durationInFrames={tail}>
+        <Audio
+          src={src}
+          startFrom={offsetB}
+          volume={(f) => MUSIC.volume * duckAt(split + f) * interpolate(f, [20, 70], [0, 1], clamp) * endFade(split + f)}
+        />
+      </Sequence>
+    </>
+  );
+};
 
 export const StartNowReel: React.FC<StartNowProps> = ({ broll = [] }) => {
   return (
     <AbsoluteFill style={{ background: "radial-gradient(ellipse at 50% 45%, #161616 0%, #0b0b0b 45%, #030303 100%)" }}>
-      {TL.scenes.map((s) => {
-        const C = SCENES[s.id];
+      {TIMELINE.map((s) => {
+        const C = SCENE_COMPONENTS[s.id];
         return (
           <Sequence key={s.id} from={s.start} durationInFrames={s.dur} name={s.id}>
             <C broll={broll} />
+            <Sequence from={s.voAt} name={`vo ${s.vo}`}>
+              <Audio src={staticFile(`startnow/vo/${s.vo}.mp3`)} volume={1} />
+            </Sequence>
           </Sequence>
         );
       })}
       <Grain />
       <AbsoluteFill style={{ background: "radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)", pointerEvents: "none" }} />
-      <Audio src={staticFile("startnow/score.wav")} />
+      <Music />
+      <Audio src={staticFile("startnow/sfx.wav")} volume={0.55} />
     </AbsoluteFill>
   );
 };
