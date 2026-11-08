@@ -17,6 +17,7 @@ import { BICEPS } from "./fit/biceps";
 import { REARDELT } from "./fit/reardelt";
 import { ABS } from "./fit/abs";
 import { RECOVERY } from "./fit/recovery";
+import { StartNowReel, START_NOW_DURATION } from "./startnow/StartNowReel";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -69,6 +70,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition id="RearDeltReel" component={WorkoutReel} durationInFrames={1125} fps={30} width={1080} height={1920} defaultProps={{ config: REARDELT }} />
       <Composition id="AbsReel" component={WorkoutReel} durationInFrames={1155} fps={30} width={1080} height={1920} defaultProps={{ config: ABS }} />
       <Composition id="RecoveryReel" component={WorkoutReel} durationInFrames={1134} fps={30} width={1080} height={1920} defaultProps={{ config: RECOVERY }} />
+      <Composition id="StartNowReel" component={StartNowReel} durationInFrames={START_NOW_DURATION} fps={30} width={1080} height={1920} defaultProps={{ broll: [] as string[] }} />
     </>
   );
 };
